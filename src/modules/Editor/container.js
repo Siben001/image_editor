@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import Thunks from './thunks';
-import Main from '../../pages/main';
+import Editor from '../../pages/Editor';
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -10,9 +10,9 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        getImageUrl: () => dispatch(Thunks.getImageUrl()),
+        getImageUrl: (name, showImage) => dispatch(Thunks.getImageUrl(name, showImage)),
     }
 };
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Main)
+export default connect(mapStateToProps, mapDispatchToProps)(Editor)

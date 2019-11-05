@@ -1,3 +1,4 @@
 export default {
-    FETCH_TODOS: 'FETCH_TODOS',
+    GOT_IMAGE_URLS: 'GOT_IMAGE_URLS',
+    ADD_IMAGE_URL: 'ADD_IMAGE_URL',
 }

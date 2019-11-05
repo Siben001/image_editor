@@ -1,19 +1,16 @@
 import Types from './types';
-// import {todosRef} from '../firebase'
 
-const addToDo = newToDo => async dispatch => {
-    console.log(newToDo)
-    // todosRef.push().set(newToDo).catch(err => console.log({err}));
-};
-const completeToDo = completeToDo => async dispatch => {
-    // todosRef.child(completeToDo).remove().catch(err => console.log({err}));
-};
+const getUrls = urls => ({
+    type: Types.GOT_IMAGE_URLS,
+    urls,
+});
 
-const getUrl = url => ({
-    type: Types.FETCH_TODOS,
+const addImageUrl = url => ({
+    type: Types.ADD_IMAGE_URL,
     url,
 });
 
 export default {
-    getUrl,
+    getUrls,
+    addImageUrl,
 }

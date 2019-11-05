@@ -1,17 +1,17 @@
 import storageRef from "../firebase";
 import Actions from "./actions";
 
-const getImageUrl = () => (dispatch) => {
-    const starsRef = storageRef.child('images/cat1.jpg');
-    // Get the download URL
-    starsRef.getDownloadURL().then(function(url) {
-        dispatch(Actions.getUrl(url));
-        console.log(url)
-        // Insert url into an <img> tag to "download"
-    }).catch(function(error) {
-
-        // A full list of error codes is available at
-        // https://firebase.google.com/docs/storage/web/handle-errors
+const getImageUrl = () => async dispatch => {
+    const starsRef = storageRef.child('images');
+    try {
+        const fileList = await starsRef.listAll();
+        const urls = {};
+        const urlPromises = fileList.items.map(item => item.getDownloadURL());
+        const urlList = await Promise.all(urlPromises);
+        urlList.forEach((url, ind) => urls[fileList.items[ind].name] = url);
+        dispatch(Actions.getUrls(urls));
+    } catch
+        (error) {
         switch (error.code) {
             case 'storage/object-not-found':
                 // File doesn't exist
@@ -29,8 +29,7 @@ const getImageUrl = () => (dispatch) => {
                 // Unknown error occurred, inspect the server response
                 break;
         }
-    });
-
+    }
 };
 
 export default {
