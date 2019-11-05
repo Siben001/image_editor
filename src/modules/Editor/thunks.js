@@ -1,5 +1,6 @@
 import storageRef from "../firebase";
 import Actions from "../main/actions";
+import axios from 'axios';
 
 const getImageUrl = (name, showImage) => async (dispatch, getState) => {
     const imageUrl = getState().MainReducer.urls[name];
@@ -10,8 +11,19 @@ const getImageUrl = (name, showImage) => async (dispatch, getState) => {
         imageRef.getDownloadURL()
             .then(url => {
                 dispatch(Actions.addImageUrl({[name]: url}));
-                console.log(url)
-                showImage(url);
+
+                const xhr = new XMLHttpRequest();
+                xhr.responseType = 'blob';
+                xhr.onload = function(event) {
+                    const blob = xhr.response;
+                    const blobUrl = URL.createObjectURL(blob);
+                    console.log(blobUrl);
+                    showImage(blobUrl);
+                };
+                xhr.open('GET', url);
+                xhr.send();
+
+
             })
             .catch(error => {
                 switch (error.code) {

@@ -2,6 +2,7 @@ import Types from './types';
 
 const initialState = {
     urls: {},
+    image: null,
 };
 
 export default (state = initialState, action) => {
@@ -16,6 +17,7 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 urls: {...state.urls, ...action.url},
+                image: action.image,
             };
         default:
             return state;
