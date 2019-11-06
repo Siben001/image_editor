@@ -1,16 +1,20 @@
 import {connect} from 'react-redux';
-import Thunks from './thunks';
+import {Actions, Operations, Thunks} from './index';
 import Editor from '../../pages/Editor';
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     return {
-        urls: state.MainReducer.urls
+        original: state.EditorReducer.original
     }
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
     return {
-        getImageUrl: (name, showImage) => dispatch(Thunks.getImageUrl(name, showImage)),
+        getImage: (name, showImage) => dispatch(Thunks.getImage(name, showImage)),
+        makeGray: (showImage) => dispatch(Operations.makeGray(showImage)),
+        makeRed: (showImage) => dispatch(Operations.makeRed(showImage)),
+        changeTransparency: (transparency, showImage) => dispatch(Operations.changeTransparency(transparency, showImage)),
+        initImageData: (imageData) => dispatch(Actions.initImageData(imageData)),
     }
 };
 

@@ -1,69 +1,137 @@
 import React, {Component} from 'react';
+import Button from "@material-ui/core/Button";
+import {withRouter} from "react-router-dom";
+import Typography from "@material-ui/core/Typography";
+
+import TransparencySlider from "./index/TransparencySlider";
+import ColorFilter from "./index/ColorFilter";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import BeforeIcon from "@material-ui/icons/NavigateBefore";
 
 const styles = {
-    container: {
-        // display: 'flex',
-        // justifyContent: 'center',
-//        flexFlow: 'column no-wrap',
-        padding: '10vh 16px 0'
+    page: {
+        backgroundColor: '#1e2024',
+        height: 'calc(100vh - 64px)',
+        display: 'flex',
     },
-    item: {
-        // width: '20vw',
-        // height: '20vh',
-        margin: 8,
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover',
-    }
+    toolPanel: {
+        backgroundColor: '#292c31',
+        width: '200px',
+        padding: 16
+    },
+    workSpace: {
+        flexGrow: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'auto',
+    },
 };
+
 
 class Editor extends Component {
 
+    initialState = {
+        transparency: 100,
+        colorFilter: '',
+    };
 
-    componentDidMount() {
-        const {match: {params: {imageName}}} = this.props;
-        this.props.getImageUrl(imageName, this.initCanvas);
-    }
+    state = this.initialState;
 
     initCanvas = url => {
+        const {initImageData} = this.props;
         const canvas = this.refs.canvas_img;
         const ctx = canvas.getContext('2d');
+        const width = window.innerWidth - 248;
         const imageObj = new Image();
         imageObj.src = url;
-        imageObj.onload = () =>  {
-            canvas.width = imageObj.width;
-            canvas.height = imageObj.height;
-            ctx.drawImage(imageObj,0, 0);
+        imageObj.onload = _ => {
+            if (imageObj.width > width) {
+                const ratio = imageObj.height / imageObj.width;
+                canvas.width = width;
+                canvas.height = width * ratio;
+            }
+            else {
+                canvas.width = imageObj.width;
+                canvas.height = imageObj.height;
+            }
+            ctx.drawImage(imageObj, 0, 0, canvas.width, canvas.height);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            initImageData(imageData);
         }
     };
 
-    // updateCanvas = (imageData) => {
-    //     const {ctx} = this.state;
-    //     ctx.putImageData(imageData, 0, 0);
-    // };
-
-    makeGray = () => {
+    updateCanvas = (imageData) => {
         const canvas = this.refs.canvas_img;
         const ctx = canvas.getContext('2d');
-        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        let data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-            let brightness = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-            data[i] = brightness
-            data[i + 1] = brightness
-            data[i + 2] = brightness
-        }
         ctx.putImageData(imageData, 0, 0);
     };
 
+    reset = () => {
+        this.updateCanvas(this.props.original);
+        this.setState(this.initialState);
+    };
+
+    handleChange = (ev, transparency) => {
+        this.props.changeTransparency(transparency, this.updateCanvas);
+        this.setState({transparency});
+    };
+
+    changeColor = ev => {
+        const {makeRed, makeGray} = this.props;
+        const colorFilter = ev.target.value;
+        switch (colorFilter) {
+            case 'GrayScale': {
+                makeGray(this.updateCanvas);
+                break;
+            }
+            case 'Red': {
+                makeRed(this.updateCanvas);
+                break;
+            }
+            default:
+                console.log('Color not exist')
+
+        }
+        this.setState({colorFilter});
+    };
+
+    componentDidMount() {
+        const {getImage, match: {params: {imageName}}} = this.props;
+        getImage(imageName, this.initCanvas);
+    }
+
     render() {
-        const {urls, match: {params: {imageName}}} = this.props;
+        const {match: {params: {imageName}}, history} = this.props;
+        const {transparency, colorFilter} = this.state;
+
         return (
-            <div style={styles.container}>
-                <button onClick={() => this.makeGray()}>GrayScale</button>
-                <canvas ref="canvas_img"/>
-            </div>
+            <React.Fragment>
+                <AppBar position="static">
+                    <Toolbar style={{backgroundColor: "#373842"}}>
+                        <IconButton edge="start" color="inherit" aria-label="menu" onClick={() => history.push("/")}>
+                            <BeforeIcon/>
+                        </IconButton>
+                        <Typography variant="h6">{imageName}</Typography>
+                    </Toolbar>
+                </AppBar>
+                <div style={styles.page}>
+
+                    <div style={styles.workSpace}>
+                        <canvas ref={'canvas_img'}/>
+                    </div>
+                    <div style={{display: 'flex', flexDirection: 'column', ...styles.toolPanel}}>
+                        <ColorFilter value={colorFilter} onChange={this.changeColor}/>
+                        <TransparencySlider value={transparency} onChange={this.handleChange}/>
+                        <Button color="primary" variant={"contained"} onClick={this.reset}>Reset</Button>
+                    </div>
+                </div>
+            </React.Fragment>
+
         );
     }
 }
-export default Editor;
+
+export default withRouter(Editor);

@@ -1,7 +1,7 @@
 import storageRef from "../firebase";
 import Actions from "./actions";
 
-const getImageUrl = () => async dispatch => {
+const getGallery = () => async dispatch => {
     const starsRef = storageRef.child('images');
     try {
         const fileList = await starsRef.listAll();
@@ -28,10 +28,20 @@ const getImageUrl = () => async dispatch => {
             case 'storage/unknown':
                 // Unknown error occurred, inspect the server response
                 break;
+            default: console.log(error)
         }
     }
 };
 
+const uploadImage = file => dispatch => {
+    const ref = storageRef.child(`images/${file.name}_${Date.now()}`);
+    ref.put(file).then(_ => {
+        alert('File uploaded successfully!');
+        dispatch(getGallery());
+    });
+};
+
 export default {
-    getImageUrl,
+    getGallery,
+    uploadImage,
 }

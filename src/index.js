@@ -8,21 +8,34 @@ import { Route, Switch} from 'react-router';
 import {BrowserRouter} from 'react-router-dom';
 
 import './index.css';
+import { ThemeProvider } from '@material-ui/core/styles';
 
 import reducers from './modules/reducer';
-import App from './modules/main/container';
-import Editor from './modules/Editor/container';
+import MainPage from './modules/main';
+import Editor from './modules/Editor';
+import {createMuiTheme} from "@material-ui/core";
+
+const theme = createMuiTheme({
+    palette: {
+        type: "dark",
+        primary: {
+            main: '#2196f3',
+        },
+    },
+});
 
 
 const store = createStore(reducers, {}, applyMiddleware(reduxThunk));
 ReactDOM.render(
     <Provider store={store}>
+        <ThemeProvider theme={theme}>
         <BrowserRouter>
             <Switch>
-                <Route exact path='/' component={App}/>
+                <Route exact path='/' component={MainPage}/>
                 <Route exact path='/edit/:imageName' component={Editor}/>
             </Switch>
         </BrowserRouter>
+        </ThemeProvider>
     </Provider>,
     document.getElementById("root")
 );

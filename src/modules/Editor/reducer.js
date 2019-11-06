@@ -1,22 +1,21 @@
 import types from './types';
 
 const initialState = {
-    urls: {},
-    image: null,
+    original: null,
 };
 
 export default (state = initialState, action) => {
     switch(action.type) {
-        case types.GOT_IMAGE_URLS:
+        case types.INITIALISE_IMAGE:
             return {
                 ...state,
-                urls: action.urls,
+                original: action.imageData,
+                current: action.imageData,
             };
-        case types.ADD_IMAGE_URL:
+        case types.SET_IMAGE_DATA:
             return {
                 ...state,
-                urls: {...state.urls, ...action.url},
-                image: action.image,
+                current: action.imageData,
             };
         default:
             return state;

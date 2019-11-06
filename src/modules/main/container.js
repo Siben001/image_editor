@@ -1,16 +1,17 @@
 import {connect} from 'react-redux';
-import Thunks from './thunks';
-import Main from '../../pages/main';
+import {Thunks} from './index';
+import Main from '../../pages/MainPage';
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     return {
         urls: state.MainReducer.urls
     }
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
     return {
-        getImageUrl: () => dispatch(Thunks.getImageUrl()),
+        getGallery: () => dispatch(Thunks.getGallery()),
+        uploadImage: (file) => dispatch(Thunks.uploadImage(file)),
     }
 };
 

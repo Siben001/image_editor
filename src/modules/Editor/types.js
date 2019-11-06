@@ -1,0 +1,4 @@
+export default {
+    INITIALISE_IMAGE: 'INITIALISE_IMAGE',
+    SET_IMAGE_DATA: 'SET_IMAGE_DATA',
+}
