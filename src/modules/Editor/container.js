@@ -4,7 +4,8 @@ import Editor from '../../pages/Editor';
 
 const mapStateToProps = (state) => {
     return {
-        original: state.EditorReducer.original
+        original: state.EditorReducer.original,
+        transparency: state.EditorReducer.transparency,
     }
 };
 
@@ -15,6 +16,7 @@ const mapDispatchToProps = (dispatch) => {
         makeRed: (showImage) => dispatch(Operations.makeRed(showImage)),
         changeTransparency: (transparency, showImage) => dispatch(Operations.changeTransparency(transparency, showImage)),
         initImageData: (imageData) => dispatch(Actions.initImageData(imageData)),
+        resetImage: () => dispatch(Actions.resetImage()),
     }
 };
 

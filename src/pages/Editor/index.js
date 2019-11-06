@@ -34,7 +34,6 @@ const styles = {
 class Editor extends Component {
 
     initialState = {
-        transparency: 100,
         colorFilter: '',
     };
 
@@ -70,7 +69,9 @@ class Editor extends Component {
     };
 
     reset = () => {
-        this.updateCanvas(this.props.original);
+        const {resetImage, original} = this.props;
+        this.updateCanvas(original);
+        resetImage();
         this.setState(this.initialState);
     };
 
@@ -104,8 +105,8 @@ class Editor extends Component {
     }
 
     render() {
-        const {match: {params: {imageName}}, history} = this.props;
-        const {transparency, colorFilter} = this.state;
+        const {transparency, match: {params: {imageName}}, history} = this.props;
+        const {colorFilter} = this.state;
 
         return (
             <React.Fragment>
